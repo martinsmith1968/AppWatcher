@@ -56,9 +56,16 @@ namespace AppWatcher
             if (application.ProcessId == default)
                 return false;
 
-            var currentProcess = Process.GetProcessById(application.ProcessId);
+            Process? currentProcess = null;
+            try
+            {
+                currentProcess = Process.GetProcessById(application.ProcessId);
+            }
+            catch
+            {
+            }
 
-            if (currentProcess.HasExited)
+            if (currentProcess?.HasExited ?? true)
                 return false;
 
             var canAccessStartInfo = CanAccessStartInfo(currentProcess);

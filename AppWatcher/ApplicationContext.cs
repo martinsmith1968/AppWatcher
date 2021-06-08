@@ -33,7 +33,7 @@ namespace AppWatcher
 
             _trayIcon = new NotifyIcon()
             {
-                Icon = Icon.FromHandle(Resources.ApplicationImage.GetHicon()),
+                Icon = Resources.ApplicationIcon,
                 ContextMenuStrip = new ContextMenuStrip()
             };
 
