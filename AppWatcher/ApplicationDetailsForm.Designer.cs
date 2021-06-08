@@ -1,5 +1,5 @@
 ﻿
-namespace AppWatcherWin
+namespace AppWatcher
 {
     partial class ApplicationDetailsForm
     {

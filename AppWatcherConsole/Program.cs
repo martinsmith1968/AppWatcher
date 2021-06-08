@@ -2,20 +2,29 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
-using System.Threading.Tasks;
-using AppWatcherWin.Configuration;
-using AppWatcherWin.Converters;
+using AppWatcherConsole.Configuration;
 
-namespace AppWatcherWin
+namespace AppWatcherConsole
 {
-    public class Watcher
+    internal class Program
     {
         private static void Log(string text)
         {
-            // TODO: Do logging properly
+            Console.Out.WriteLine($"{DateTime.UtcNow:HH:mm:ss}: {text}");
         }
 
-        public static Task Monitor(CancellationToken token, AppSettings appSettings, IList<ApplicationDetails> applications)
+        private static void Main(string[] args)
+        {
+            var appSettings = new AppSettings();
+
+            var applications = appSettings.Applications;
+
+            var token = new CancellationTokenSource().Token;
+
+            Monitor(token, appSettings, applications);
+        }
+
+        private static void Monitor(CancellationToken token, AppSettings appSettings, IList<ApplicationDetails> applications)
         {
             while (!token.IsCancellationRequested)
             {
@@ -26,7 +35,6 @@ namespace AppWatcherWin
                     {
                         Log($"Starting: {application.FileName} {application.Arguments}");
                         var processId = StartApplication(application);
-
                         Log($"Started: {processId}");
                         application.ProcessId = processId;
                     }
@@ -38,13 +46,11 @@ namespace AppWatcherWin
                 Log($"Sleeping: {appSettings.WakeUpTimeout.TotalSeconds} seconds");
                 Thread.Sleep(appSettings.WakeUpTimeout);
             }
-
-            return Task.CompletedTask;
         }
 
-        public static int StartApplication(ApplicationDetails applicationDetails)
+        private static int StartApplication(ApplicationDetails application)
         {
-            var startInfo = ProcessStartInfoConverter.GetStartInfo(applicationDetails);
+            var startInfo = new ProcessStartInfo(application.FileName, application.Arguments);
 
             var process = Process.Start(startInfo);
 

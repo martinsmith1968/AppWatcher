@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
-using AppWatcherWin.Configuration;
+using AppWatcher.Configuration;
 
-namespace AppWatcherWin.Converters
+namespace AppWatcher.Converters
 {
     public class JsonSerializationConverter
     {

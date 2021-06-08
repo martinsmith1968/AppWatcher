@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Windows.Forms;
-using AppWatcherWin.Configuration;
+using AppWatcher.Configuration;
 
 // ReSharper disable InconsistentNaming
 
-namespace AppWatcherWin
+namespace AppWatcher
 {
     public partial class ConfigurationForm : Form
     {
