@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using AppWatcherWin.Configuration;
+using AppWatcherWin.Converters;
 
 namespace AppWatcherWin
 {
@@ -41,9 +42,9 @@ namespace AppWatcherWin
             return Task.CompletedTask;
         }
 
-        private static int StartApplication(ApplicationDetails application)
+        public static int StartApplication(ApplicationDetails applicationDetails)
         {
-            var startInfo = new ProcessStartInfo(application.FileName, application.Arguments);
+            var startInfo = ProcessStartInfoConverter.GetStartInfo(applicationDetails);
 
             var process = Process.Start(startInfo);
 

@@ -121,6 +121,9 @@
   <data name="ApplicationImage" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\watcher.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="ConfigurationImage" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\configuration_5164.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="ExitImage" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\PikPng.com_clear-button-png_3492816.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>

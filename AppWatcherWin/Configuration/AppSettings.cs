@@ -1,14 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text.Json;
+using System.Collections.Specialized;
+using System.Linq;
+using AppWatcherWin.Converters;
 
 namespace AppWatcherWin.Configuration
 {
+    public class AppSettingsSavedArgs : EventArgs
+    {
+        public AppSettings AppSettings { get; }
+
+        public AppSettingsSavedArgs(AppSettings appSettings)
+        {
+            AppSettings = appSettings;
+        }
+    }
+
     public class AppSettings
     {
         public TimeSpan WakeUpTimeout { get; set; } = TimeSpan.FromSeconds(30);
 
         public IList<ApplicationDetails> Applications = new List<ApplicationDetails>();
+
+        public event EventHandler<AppSettingsSavedArgs> OnSaved = null!;
 
         public AppSettings()
         {
@@ -18,12 +32,12 @@ namespace AppWatcherWin.Configuration
             //    Arguments = "C:\\Data\\1.json"
             //});
 
-            Applications.Add(
-                new ApplicationDetails(
-                    "C:\\Program Files\\VideoLAN\\VLC\\vlc.exe",
-                    "\"C:\\Utils\\Videos\\WhiteNoise.mp4\" --loop --no-audio --video-x=0 --video-y=0"
-                )
-            );
+            //Applications.Add(
+            //    new ApplicationDetails("Active Desktop","C:\\Program Files\\VideoLAN\\VLC\\vlc.exe")
+            //    {
+            //        Arguments = "\"C:\\Utils\\Videos\\WhiteNoise.mp4\" --loop --no-audio --video-x=0 --video-y=0"
+            //    }
+            //);
         }
 
         public void Load()
@@ -31,22 +45,35 @@ namespace AppWatcherWin.Configuration
             if (Properties.Settings.Default.App_IsUpgraded)
             {
                 Properties.Settings.Default.Upgrade();
-                Properties.Settings.Default.Save();
+                Properties.Settings.Default.App_IsUpgraded = false;
             }
 
             WakeUpTimeout = Properties.Settings.Default.Monitor_WakeUpTimeout;
-            Applications.Clear();
 
-            foreach (var applicationDetail in Properties.Settings.Default.Monitor_ApplicationDetails)
+            Applications.Clear();
+            if (Properties.Settings.Default?.Monitor_ApplicationDetails != null)
             {
-                var appDetails = JsonSerializer.Deserialize<ApplicationDetails>(applicationDetail);
-                Applications.Add(appDetails);
+                foreach (var applicationDetail in Properties.Settings.Default.Monitor_ApplicationDetails)
+                {
+                    Applications.Add(JsonSerializationConverter.FromJson(applicationDetail));
+                }
             }
         }
 
         public void Save()
         {
-            // TODO:
+            Properties.Settings.Default.Monitor_WakeUpTimeout = WakeUpTimeout;
+
+            var appDetails = Applications
+                .Select(JsonSerializationConverter.ToJson)
+                .ToArray();
+            Properties.Settings.Default.Monitor_ApplicationDetails = new StringCollection();
+            Properties.Settings.Default.Monitor_ApplicationDetails.AddRange(appDetails);
+
+            Properties.Settings.Default.Save();
+
+            var args = new AppSettingsSavedArgs(this);
+            OnSaved?.Invoke(this, args);
         }
     }
 }
