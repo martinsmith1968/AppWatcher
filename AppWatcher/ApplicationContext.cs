@@ -1,10 +1,12 @@
 ﻿using System;
-using System.Drawing;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using AppWatcher.Configuration;
+using AppWatcher.Execution;
 
 namespace AppWatcher
 {
@@ -12,6 +14,7 @@ namespace AppWatcher
     {
         internal static AppSettings AppSettings = new AppSettings();
 
+        internal static IDictionary<string, ActiveApplication> ActiveApplications = new Dictionary<string, ActiveApplication>();
 
         private readonly NotifyIcon _trayIcon;
         private readonly CancellationTokenSource _tokenSource = new CancellationTokenSource();
@@ -62,9 +65,19 @@ namespace AppWatcher
             if (_watcherTask != null)
                 _tokenSource.Cancel();
 
+            ReloadActiveApplications();
+
             _watcherTask = Task.Run(
                 () => Watcher.Monitor(_tokenSource.Token, AppSettings, AppSettings.Applications)
             );
+        }
+
+        private void ReloadActiveApplications()
+        {
+            foreach (var applicationDetails in AppSettings.Applications)
+            {
+
+            }
         }
 
         private void ShowConfigurationForm(int startTabPageIndex = 0)
